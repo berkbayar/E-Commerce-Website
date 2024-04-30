@@ -6,7 +6,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:xcdb-.919adur@localhost/my_ecommerce'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:xcdb-.919adur@berkecommerce.postgres.database.azure.com/my_ecommerce'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
