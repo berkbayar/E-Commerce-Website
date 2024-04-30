@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ürün Detayı</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+            <img src="{{ url_for('static', filename='img/hmlogo.png') }}" alt="Logo" style="height: 70px;">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                <a class="nav-link" href="#">Kadın</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="#">Erkek</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="#">Bebek</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="#">Çocuk</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                <a class="nav-link" href="#">Oturum aç</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link header-icons">
+                    <i class="fa fa-heart"></i>
+                </a>
+                </li>
+            
+                    <li class="nav-item">
+                        
+                        <div class="d-flex justify-content-end align-items-center mb-3">
+                            <input class="form-control mr-2 search-box" type="search" placeholder="Ürün ara" aria-label="Search">
+                            
+                         
+                            <div class="dropdown" id="sort-order">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Sıralama
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <button class="dropdown-item" onclick="updateSortOrder('asc')">Fiyata Göre Artan</button>
+                                    <button class="dropdown-item" onclick="updateSortOrder('desc')">Fiyata Göre Azalan</button>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+            </ul>
+            </div>
+        </div>
+        </nav>
+        </br>
+        
+        <div id="search-results">
+            <div id="category-panel" style="float: left; width: 20%; padding-right: 20px;">
+           
+            </div>
+            <div id="products-panel" style="float: left; width: 80%;">
+       
+            </div>
+        </div>
+    
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="img-fluid">
+            </div>
+            <div class="col-md-6">
+                <h2>{{ product.name }}</h2>
+                <p><strong>Fiyat:</strong> {{ product.price }} TL</p>
+                <p><strong>Açıklama:</strong> {{ product.description }}</p>
+                <p><strong>Kategori:</strong> {{ product.category }}</p>
+                <button class="category-btn">Sepete Ekle</button>
+            </div>
+        </div>
+    </div>
+    </br>
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 mb-12">
+                    <a href="/" class="footer-logo">
+                        <img src="{{ url_for('static', filename='img/hmlogo.png') }}" alt="Logo" style="height: 70px;">
+                    </a>
+                </div>
+                </br></br></br></br>
+                <div class="col-md-4 text-center">
+                    <h5>ONLINE ALIŞVERİŞ</h5>
+                    <ul>
+                        <li><a href="#">Kadın</a></li>
+                        <li><a href="#">Erkek</a></li>
+                        <li><a href="#">Bebek</a></li>
+                        <li><a href="#">Çocuk</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h5>KURUMSAL BİLGİLER</h5>
+                    <ul>
+                        <li><a href="#">H&M'de Kariyer</a></li>
+                        <li><a href="#">H&M Grubu Hakkında</a></li>
+                        <li><a href="#">Sürdürülebilirlik</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h5>YARDIM</h5>
+                    <ul>
+                        <li><a href="#">Müşteri Hizmetleri</a></li>
+                        <li><a href="#">Hesabım</a></li>
+                        <li><a href="#">Mağaza Bul</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+
+<script>
+    document.querySelector('.search-box').addEventListener('input', function() {
+        searchProducts(); 
+    });
+    
+    document.getElementById('sort-order').addEventListener('change', function() {
+        searchProducts(); 
+    });
+    
+    function searchProducts() {
+        const query = document.querySelector('.search-box').value;
+        const sortOrder = document.getElementById('sort-order').value;
+    
+        if (query.length > 0) {
+          fetch(`/api/search?query=${query}&sort=${sortOrder}`)
+            .then(response => response.json())
+            .then(data => {
+              const categoryPanel = document.getElementById('category-panel');
+              const productsPanel = document.getElementById('products-panel');
+        
+              categoryPanel.innerHTML = '';
+              data.categories.forEach(cat => {
+                const categoryDiv = `<div>${cat.category} (${cat.count})</div>`;
+                categoryPanel.innerHTML += categoryDiv;
+              });
+        
+              productsPanel.innerHTML = '';
+              data.products.forEach(product => {
+                const productCard = `<div class="product-card">
+                                        <a href="/product/${product.id}">
+                                            <img src="${product.image_url}" alt="${product.name}">
+                                            <h5>${product.name}</h5>
+                                            <p>${product.price} TL</p>
+                                        </a>
+                                     </div>`;
+                productsPanel.innerHTML += productCard;
+              });
+              document.getElementById('search-results').style.display = 'block'; 
+            })
+            .catch(error => console.error('Error:', error));
+        } else {
+          document.getElementById('search-results').style.display = 'none'; 
+        }
+    }
+    
+      
+    function updateSortOrder(order) {
+        document.getElementById('sort-order').value = order;
+         
+         const dropdownItems = document.querySelectorAll('.dropdown-item');
+         dropdownItems.forEach(item => {
+             if(item.getAttribute('onclick').includes(order)) {
+                 item.classList.add('selected-option'); 
+             } else {
+                 item.classList.remove('selected-option');
+             }
+         });
+        searchProducts(); 
+    }
+    
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        updateSortOrder('asc'); 
+    });
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.9/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
