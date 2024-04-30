@@ -36,3 +36,13 @@ This e-commerce website is designed to showcase and sell a variety of fashion pr
 5. **Run the application**
     ```bash
     python app.py
+
+## Contributing
+Contributions to enhance the functionality or design of the website are welcome. Please fork the repository and submit a pull request with your changes.
+
+## License
+This project is licensed under the MIT License - see the LICENSE.md file for details.
+
+## Contact
+For any queries or further information, please contact berkbayr@gmail.com
+
